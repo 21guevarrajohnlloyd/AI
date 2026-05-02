@@ -66,6 +66,54 @@ if (menuButton && navShell) {
   });
 }
 
+const contactForm = document.querySelector("[data-contact-form]");
+const formStatus = document.querySelector("[data-form-status]");
+
+if (contactForm && formStatus) {
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton ? submitButton.textContent : "";
+    const formData = new FormData(contactForm);
+    const payload = Object.fromEntries(formData.entries());
+
+    formStatus.classList.remove("form-status-error");
+    formStatus.textContent = "Sending request...";
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending...";
+    }
+
+    try {
+      const response = await fetch(contactForm.action, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error("Contact request failed");
+      }
+
+      contactForm.reset();
+      formStatus.textContent = "Request sent. We will get back to you soon.";
+    } catch {
+      formStatus.classList.add("form-status-error");
+      formStatus.textContent = "Something went wrong. Please email 21guevarrajohnlloyd@gmail.com directly.";
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
+    }
+  });
+}
+
 const aboutEditStorageKey = "flowpilot-about-content";
 const aboutEditableNodes = document.querySelectorAll("[data-edit-key]");
 
