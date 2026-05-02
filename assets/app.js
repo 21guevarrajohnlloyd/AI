@@ -76,3 +76,72 @@ if (contactForm && formStatus) {
     formStatus.textContent = "Request captured. Connect this form to your CRM or email service before launch.";
   });
 }
+
+const aboutEditStorageKey = "flowpilot-about-content";
+const aboutEditableNodes = document.querySelectorAll("[data-edit-key]");
+
+function syncAboutContactLinks() {
+  const emailLink = document.querySelector('[data-edit-key="contact.email"]');
+  if (emailLink && emailLink.textContent.includes("@")) {
+    emailLink.setAttribute("href", `mailto:${emailLink.textContent.trim()}`);
+  }
+}
+
+function readAboutContent() {
+  try {
+    return JSON.parse(localStorage.getItem(aboutEditStorageKey) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+if (currentPage === "about" && aboutEditableNodes.length) {
+  const savedContent = readAboutContent();
+
+  aboutEditableNodes.forEach((node) => {
+    const savedValue = savedContent[node.dataset.editKey];
+    if (typeof savedValue === "string") {
+      node.textContent = savedValue;
+    }
+  });
+  syncAboutContactLinks();
+
+  const editParams = new URLSearchParams(window.location.search);
+
+  if (editParams.get("edit") === "about") {
+    document.body.classList.add("about-edit-mode");
+
+    aboutEditableNodes.forEach((node) => {
+      node.setAttribute("contenteditable", "true");
+      node.setAttribute("spellcheck", "true");
+      if (node.tagName === "A") {
+        node.addEventListener("click", (event) => event.preventDefault());
+      }
+    });
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "edit-toolbar";
+    toolbar.innerHTML = `
+      <strong>Editing About</strong>
+      <button class="button primary" type="button" data-save-about>Save</button>
+      <button class="button secondary" type="button" data-reset-about>Reset</button>
+      <span data-edit-status aria-live="polite"></span>
+    `;
+    document.body.appendChild(toolbar);
+
+    toolbar.querySelector("[data-save-about]").addEventListener("click", () => {
+      const nextContent = {};
+      aboutEditableNodes.forEach((node) => {
+        nextContent[node.dataset.editKey] = node.textContent.trim();
+      });
+      localStorage.setItem(aboutEditStorageKey, JSON.stringify(nextContent));
+      syncAboutContactLinks();
+      toolbar.querySelector("[data-edit-status]").textContent = "Saved in this browser.";
+    });
+
+    toolbar.querySelector("[data-reset-about]").addEventListener("click", () => {
+      localStorage.removeItem(aboutEditStorageKey);
+      window.location.reload();
+    });
+  }
+}
