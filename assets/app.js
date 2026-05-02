@@ -66,48 +66,6 @@ if (menuButton && navShell) {
   });
 }
 
-const contactForm = document.querySelector("[data-contact-form]");
-const formStatus = document.querySelector("[data-form-status]");
-
-if (contactForm && formStatus) {
-  contactForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const submitButton = contactForm.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton ? submitButton.textContent : "";
-    const formData = new FormData(contactForm);
-
-    formStatus.textContent = "Sending request...";
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.textContent = "Sending...";
-    }
-
-    try {
-      const response = await fetch(contactForm.action, {
-        method: contactForm.method || "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json"
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error("Form submission failed");
-      }
-
-      contactForm.reset();
-      formStatus.textContent = "Request sent. We will get back to you soon.";
-    } catch {
-      formStatus.textContent = "Something went wrong. Please email hello@flowpilot.ai directly.";
-    } finally {
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = originalButtonText;
-      }
-    }
-  });
-}
-
 const aboutEditStorageKey = "flowpilot-about-content";
 const aboutEditableNodes = document.querySelectorAll("[data-edit-key]");
 

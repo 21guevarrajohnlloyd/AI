@@ -740,6 +740,26 @@ textarea:focus {
   font-weight: 800;
 }
 
+.form-status:empty,
+.field-error:empty {
+  display: none;
+}
+
+.form-status-error,
+.field-error {
+  color: var(--coral);
+}
+
+.field-error {
+  min-height: 18px;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+[aria-invalid="true"] {
+  border-color: var(--coral);
+}
+
 .contact-detail {
   display: grid;
   gap: 4px;

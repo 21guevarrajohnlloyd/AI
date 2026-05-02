@@ -26,23 +26,29 @@
 
     <section class="section">
       <div class="container contact-grid">
-        <form class="contact-form" action="https://formspree.io/f/mlgzdvbg" method="POST" data-contact-form>
+        <div class="form-status" data-fs-success aria-live="polite"></div>
+        <div class="form-status form-status-error" data-fs-error aria-live="polite"></div>
+
+        <form class="contact-form" id="contact-form" action="https://formspree.io/f/mlgzdvbg" method="POST">
           <input type="hidden" name="_subject" value="New FlowPilot AI contact request">
           <label>
             Name
-            <input type="text" name="name" placeholder="Your name" required>
+            <input type="text" name="name" placeholder="Your name" required data-fs-field>
+            <span class="field-error" data-fs-error="name"></span>
           </label>
           <label>
             Work email
-            <input type="email" name="email" placeholder="you@company.com" required>
+            <input type="email" name="email" placeholder="you@company.com" required data-fs-field>
+            <span class="field-error" data-fs-error="email"></span>
           </label>
           <label>
             Company
-            <input type="text" name="company" placeholder="Company name">
+            <input type="text" name="company" placeholder="Company name" data-fs-field>
+            <span class="field-error" data-fs-error="company"></span>
           </label>
           <label>
             Automation priority
-            <select name="priority" required>
+            <select name="priority" required data-fs-field>
               <option value="">Select one</option>
               <option>Sales and CRM</option>
               <option>Customer support</option>
@@ -51,13 +57,14 @@
               <option>Marketing</option>
               <option>Custom workflow</option>
             </select>
+            <span class="field-error" data-fs-error="priority"></span>
           </label>
           <label>
             What should be automated?
-            <textarea name="message" rows="5" placeholder="Describe the repetitive process, tools involved, and current pain point." required></textarea>
+            <textarea name="message" rows="5" placeholder="Describe the repetitive process, tools involved, and current pain point." required data-fs-field></textarea>
+            <span class="field-error" data-fs-error="message"></span>
           </label>
-          <button class="button primary" type="submit">Send request</button>
-          <p class="form-status" data-form-status aria-live="polite"></p>
+          <button class="button primary" type="submit" data-fs-submit-btn>Send request</button>
         </form>
 
         <aside class="contact-panel">
@@ -82,6 +89,11 @@
   </main>
 
   <footer class="site-footer" data-footer></footer>
+  <script>
+    window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+    formspree("initForm", { formElement: "#contact-form", formId: "mlgzdvbg" });
+  </script>
+  <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
   <script src="assets/app.js"></script>
 </body>
 </html>
